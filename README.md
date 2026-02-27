@@ -1,5 +1,6 @@
 TB3 Robotics Project
-🚀 Système de navigation autonome pour TurtleBot3 sous ROS 2
+
+ Système de navigation autonome pour TurtleBot3 sous ROS 2
 
 Développement d’un système complet de navigation autonome pour TurtleBot3 basé sur ROS 2 et C++, intégrant :
 
@@ -11,7 +12,7 @@ La planification de trajectoire et l’évitement d’obstacles avec Nav2
 
 Une chaîne complète : Perception → Localisation → Planification → Contrôle
 
-🧭 Description du projet
+1) Description du projet
 
 Ce projet a pour objectif de concevoir et intégrer une architecture complète de navigation autonome pour un robot mobile simulé sous Gazebo.
 
@@ -39,7 +40,7 @@ Le développement de nodes C++
 
 La conception d’un pipeline complet de navigation autonome
 
-⚙️ Environnement technique
+2) Environnement technique
 Système
 
 Ubuntu 24.04
@@ -53,7 +54,7 @@ sudo apt install ros-jazzy-slam-toolbox
 sudo apt install ros-jazzy-navigation2
 sudo apt install ros-jazzy-turtlebot3*
 
-🏗️ Architecture et étapes clés
+3) Architecture et étapes clés
 1️⃣ Conception de l’environnement de simulation
 
 Création d’un fichier world.sdf personnalisé intégrant des obstacles dynamiques
@@ -92,7 +93,7 @@ Ajout des plugins Gazebo permettant l’activation du capteur LiDAR.
 
 Cette étape a permis de finaliser la chaîne de perception.
 
-🤖 Développement des nodes C++
+4) Développement des nodes C++
 Navigation basique
 
 Exploitation des données /odom
@@ -109,7 +110,7 @@ Implémentation d’une logique d’évitement réactif
 
 Bien que fonctionnelle, cette approche restait limitée (pas de planification globale).
 
-🗺️ Intégration SLAM & Nav2
+5) Intégration SLAM & Nav2
 
 La prochaine étape consistait à intégrer :
 
@@ -128,7 +129,7 @@ SLAM configuré mais non encore pleinement opérationnel
 
 Nav2 en cours de préparation dépendant de la validation du SLAM
 
-🧩 Pipeline actuel
+ Pipeline actuel
 
 Perception (LiDAR)
 → Localisation (Odometry)
@@ -142,7 +143,7 @@ Perception
 → Planification (Nav2)
 → Contrôle
 
-🎯 Compétences mobilisées
+ Compétences mobilisées:
 
 ROS 2 (nodes, topics, launch files, architecture modulaire)
 
