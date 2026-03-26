@@ -1,0 +1,64 @@
+slam_toolbox:
+  ros__parameters:
+
+    # ── Core settings ──────────────────────────────────────────
+    use_sim_time: true
+    odom_frame: odom
+    map_frame: map
+    base_frame: ${namespace}base_footprint
+    scan_topic: /scan
+    mode: mapping                    # mapping mode (not localization)
+
+    # ── How often to update the map ───────────────────────────
+    map_update_interval: 5.0         # seconds between map saves
+    resolution: 0.05                 # map resolution in metres (5cm per pixel)
+
+    # ── Minimum movement before updating ──────────────────────
+    # Robot must move this much before slam processes a new scan
+    # Prevents wasting CPU when robot is standing still
+    minimum_travel_distance: 0.1     # metres
+    minimum_travel_heading: 0.1      # radians (~6 degrees)
+
+    # ── Scan matching settings ─────────────────────────────────
+    use_scan_matching: true
+    use_scan_barycenter: true
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+
+    # ── Loop closure ──────────────────────────────────────────
+    # Loop closure = when robot revisits a place it already mapped
+    # slam corrects the map using this information
+    do_loop_closing: true
+    loop_search_maximum_distance: 3.0
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_covariance: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+
+    # ── Search space parameters ────────────────────────────────
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # ── Penalty settings ──────────────────────────────────────
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+
+    # ── Solver ────────────────────────────────────────────────
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
