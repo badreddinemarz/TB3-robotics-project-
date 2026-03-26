@@ -1,6 +1,0 @@
-slam_toolbox:
-  ros__parameters:
-    use_sim_time: true
-    odom_frame: odom
-    map_frame: map
-    base_frame: base_footprint
