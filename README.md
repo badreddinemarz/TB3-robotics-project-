@@ -1,161 +1,144 @@
-TB3 Robotics Project
+# TB3 Robotics Project 🤖
 
- Système de navigation autonome pour TurtleBot3 sous ROS 2
+> Système de navigation autonome pour TurtleBot3 sous ROS 2 Jazzy
 
-Développement d’un système complet de navigation autonome pour TurtleBot3 basé sur ROS 2 et C++, intégrant :
 
-Un environnement de simulation personnalisé (SDF) avec obstacles dynamiques
+---
 
-Une architecture prête pour la cartographie en temps réel via SLAM Toolbox
+## 📋 Vue d'ensemble
 
-La planification de trajectoire et l’évitement d’obstacles avec Nav2
+Développement d'un système complet de navigation autonome pour TurtleBot3 basé sur **ROS 2** et **C++**, couvrant l'ensemble de la chaîne :
 
-Une chaîne complète : Perception → Localisation → Planification → Contrôle
+```
+Perception (LiDAR) → SLAM → Cartographie → Planification (Nav2) → Contrôle (cmd_vel)
+```
 
-1) Description du projet
+| Composant | Statut |
+|---|---|
+| 🟢 Simulation Gazebo (world SDF) | Opérationnel |
+| 🟢 Intégration TurtleBot3 (URDF) | Opérationnel |
+| 🟢 Bridge Gazebo ↔ ROS 2 | Opérationnel |
+| 🟢 Nodes C++ (navigation + évitement) | Opérationnel |
+| 🟢 SLAM Toolbox | Opérationnel |
+| 🟡 Nav2 (planification globale) | En cours |
 
-Ce projet a pour objectif de concevoir et intégrer une architecture complète de navigation autonome pour un robot mobile simulé sous Gazebo.
+---
 
-Objectifs
+## 🌐 Présentation du projet
 
-Concevoir un environnement de simulation réaliste au format SDF
+👉 **[Voir la page de présentation complète](https://badreddinemarz.github.io/TB3-robotics-project-/)**
 
-Intégrer un robot TurtleBot3 avec description URDF complète
+---
 
-Mettre en place la communication bidirectionnelle entre Gazebo et ROS 2
+## 🛠️ Environnement technique
 
-Exploiter les données LiDAR pour la perception
+| Outil | Version |
+|---|---|
+| OS | Ubuntu 24.04 |
+| Framework | ROS 2 Jazzy |
+| Simulateur | Gazebo Harmonic |
+| Langage | C++ |
 
-Préparer l’intégration de SLAM pour la cartographie en ligne
+### Installation des dépendances
 
-Configurer Nav2 pour une navigation robuste
-
-Le projet met en avant :
-
-L’architecture distribuée et modulaire de ROS 2
-
-L’intégration et le paramétrage de capteurs LiDAR
-
-Le développement de nodes C++
-
-La conception d’un pipeline complet de navigation autonome
-
-2) Environnement technique
-Système
-
-Ubuntu 24.04
-
-ROS 2 Jazzy
-
-Gazebo Harmonic
-
-Dépendances
+```bash
+# SLAM
 sudo apt install ros-jazzy-slam-toolbox
+
+# Navigation
 sudo apt install ros-jazzy-navigation2
+
+# TurtleBot3
 sudo apt install ros-jazzy-turtlebot3*
+```
 
-3) Architecture et étapes clés
-1️⃣ Conception de l’environnement de simulation
+---
 
-Création d’un fichier world.sdf personnalisé intégrant des obstacles dynamiques
+## 🏗️ Architecture du projet
 
-Intégration via le launch file : spawn_warehouse.launch.py
+```
+TB3-robotics-project/
+├── src/                        # Nodes C++
+│   ├── navigation_node.cpp     # Navigation vers positions prédéfinies
+│   └── obstacle_avoidance.cpp  # Évitement réactif LiDAR
+├── launch/                     # Launch files ROS 2
+│   ├── spawn_warehouse.launch.py
+│   └── single_robot.launch.py
+├── worlds/                     # Environnement de simulation
+│   └── world.sdf
+├── config/                     # Paramètres Nav2 / SLAM
+│   └── nav2_params.yaml
+└── index.html                  # Page de présentation
+```
 
-2️⃣ Intégration du robot
+---
 
-Utilisation du modèle SDF du TurtleBot3 depuis le package turtlebot3_gazebo
+## 🚀 Étapes de développement
 
-Chargement de la description URDF
+### 1️⃣ Environnement de simulation
 
-Lancement via : single_robot.launch.py
+Création d'un fichier `world.sdf` personnalisé avec obstacles dynamiques, lancé via :
 
-À ce stade, le robot est correctement simulé dans Gazebo.
+```bash
+ros2 launch tb3_project spawn_warehouse.launch.py
+```
 
-🔁 Bridge Gazebo ↔ ROS 2
+### 2️⃣ Intégration du robot
 
-Mise en place de la communication entre la simulation et ROS 2 via les topics :
+Chargement du TurtleBot3 avec description URDF complète :
 
-/cmd_vel
+```bash
+ros2 launch tb3_project single_robot.launch.py
+```
 
-/odom
+### 🔁 Bridge Gazebo ↔ ROS 2
 
-/scan
+Communication bidirectionnelle via les topics :
 
-Difficulté rencontrée : LiDAR non fonctionnel
+| Topic | Type | Rôle |
+|---|---|---|
+| `/cmd_vel` | geometry_msgs/Twist | Commande du robot |
+| `/odom` | nav_msgs/Odometry | Localisation |
+| `/scan` | sensor_msgs/LaserScan | Données LiDAR |
 
-Le topic /scan ne publiait pas de données.
+> **Problème rencontré** : Le topic `/scan` ne publiait aucune donnée.  
+> **Cause** : Absence des plugins LiDAR dans `world.sdf`.  
+> **Solution** : Ajout des plugins Gazebo nécessaires → chaîne de perception finalisée.
 
-Cause identifiée :
-Absence des plugins nécessaires dans le fichier world.sdf.
+### 4️⃣ Nodes C++
 
-Solution :
-Ajout des plugins Gazebo permettant l’activation du capteur LiDAR.
+**Navigation basique**
+- Exploitation de `/odom`
+- Commande via `/cmd_vel`
+- Navigation vers des waypoints prédéfinis
 
-Cette étape a permis de finaliser la chaîne de perception.
+**Évitement d'obstacles**
+- Exploitation de `/scan`
+- Logique d'évitement réactif basée sur les données LiDAR
 
-4) Développement des nodes C++
-Navigation basique
+### 5️⃣ Intégration SLAM & Nav2
 
-Exploitation des données /odom
+- **SLAM Toolbox** : cartographie en temps réel ✅ opérationnel
+- **Nav2** : planification globale et locale 🔄 en cours
 
-Commande du robot via /cmd_vel
+---
 
-Navigation vers des positions prédéfinies
+## 💡 Points techniques notables
 
-Évitement d’obstacles
+- Architecture **distribuée et modulaire** ROS 2
+- Intégration et paramétrage de capteurs **LiDAR**
+- Développement de **nodes C++** communicants via topics
+- Débogage multi-composants (Gazebo + ROS 2 + capteurs)
+- Conception d'un **pipeline complet** de navigation autonome
 
-Exploitation des données /scan
+---
 
-Implémentation d’une logique d’évitement réactif
+## 🧠 Compétences mobilisées
 
-Bien que fonctionnelle, cette approche restait limitée (pas de planification globale).
+`ROS 2` `Gazebo` `SDF` `URDF` `C++` `SLAM Toolbox` `Nav2` `LiDAR` `Debugging` `Architecture modulaire`
 
-5) Intégration SLAM & Nav2
+---
 
-La prochaine étape consistait à intégrer :
+## 👤 Auteur
 
-SLAM Toolbox pour la cartographie en temps réel
-
-Nav2 pour la planification globale et locale
-
-⚠️ État d’avancement actuel
-
-L’architecture a été préparée pour intégrer SLAM et Nav2.
-Cependant, l’intégration complète de SLAM n’a pas encore été finalisée et validée en simulation.
-
-Le projet s’est arrêté à cette étape :
-
-SLAM configuré mais non encore pleinement opérationnel
-
-Nav2 en cours de préparation dépendant de la validation du SLAM
-
- Pipeline actuel
-
-Perception (LiDAR)
-→ Localisation (Odometry)
-→ Contrôle bas niveau (cmd_vel)
-
-Pipeline cible (en cours d’intégration) :
-
-Perception
-→ SLAM
-→ Cartographie
-→ Planification (Nav2)
-→ Contrôle
-
- Compétences mobilisées:
-
-ROS 2 (nodes, topics, launch files, architecture modulaire)
-
-Gazebo & modélisation SDF
-
-URDF
-
-Intégration LiDAR
-
-Développement C++
-
-Debugging multi-composants
-
-Gestion autonome d’un projet technique complexe
-
+**badreddinemarz** — Projet réalisé en autonomie complète
